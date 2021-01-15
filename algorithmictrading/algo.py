@@ -128,13 +128,132 @@ def make_momentum_portfolio(df, portfolio_size, stock_cutoff=50):
               .pipe(get_share_amounts, portfolio_size=portfolio_size)
     )
 
+def make_value_portfolio(df, portfolio_size, stock_cutoff=50):
+    return (df.copy()
+              .pipe(get_value_data)
+              .pipe(generate_robust_value_score, stock_cutoff=stock_cutoff)
+              .pipe(get_share_amounts, portfolio_size=portfolio_size)
+    )
+
+def export_to_excel(df, filename):
+    writer = pd.ExcelWriter(fr'..\data\trade-lists\{filename}.xlsx', engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Recommended Trades', index = False)
+    
+    string_format = writer.book.add_format(
+        {
+        'font_color': font_color,
+        'bg_color': background_color,
+        'border': 1,
+        'border_color': font_color
+        }
+    )
+
+    dollar_format = writer.book.add_format(
+            {
+            'num_format':'$0.00',
+            'font_color': font_color,
+            'bg_color': background_color,
+            'border': 1,
+            'border_color': font_color
+            }
+        )
+
+    pct_format = writer.book.add_format(
+            {
+            'num_format':'0.00%',
+            'font_color': font_color,
+            'bg_color': background_color,
+            'border': 1,
+            'border_color': font_color
+            }
+        )
+
+    float_format = writer.book.add_format(
+            {
+            'num_format':'0.00',
+            'font_color': font_color,
+            'bg_color': background_color,
+            'border': 1,
+            'border_color': font_color
+            }
+        )
+
+    integer_format = writer.book.add_format(
+            {
+            'num_format':'0',
+            'font_color': font_color,
+            'bg_color': background_color,
+            'border': 1,
+            'border_color': font_color
+            }
+        )
+
+    market_cap_format = writer.book.add_format(
+            {
+            'num_format':'$#,##0.0,,', # millions
+            'font_color': font_color,
+            'bg_color': background_color,
+            'border': 1,
+            'border_color': font_color
+            }
+        )
+
+    if filename == 'value_recommended_trades':
+        column_formats = { 
+                        'A': ['ticker', string_format],
+                        'B': ['latest_price', dollar_format],
+                        'C': ['peRatio', pct_format],
+                        'D': ['priceToBook', pct_format],
+                        'E': ['priceToSales', pct_format],
+                        'F': ['enterpriseValue/EBITDA', pct_format],
+                        'G': ['enterpriseValue/grossProfit', pct_format],
+                        'H': ['rv_score', float_format],
+                        'I': ['recommended_trades', integer_format]
+                        }
+    elif filename == 'momentum_recommended_trades':
+        column_formats = { 
+                        'A': ['ticker', string_format],
+                        'B': ['latest_price', dollar_format],
+                        'C': ['1_year_change', pct_format],
+                        'D': ['6_month_change', pct_format],
+                        'E': ['3_month_change', pct_format],
+                        'F': ['1_month_change', pct_format],
+                        'G': ['hqm_score', float_format],
+                        'H': ['recommended_trades', integer_format]
+                        }
+    elif filename == 'equal_weight_recommended_trades':
+        column_formats = { 
+                        'A': ['ticker', string_format],
+                        'B': ['latest_price', dollar_format],
+                        'C': ['market_cap', market_cap_format],
+                        'D': ['recommended_trades', integer_format]
+                        }
+    for column in column_formats.keys():
+            writer.sheets['Recommended Trades'].set_column(f'{column}:{column}', 20, column_formats[column][1])
+            writer.sheets['Recommended Trades'].write(f'{column}1', column_formats[column][0], string_format)
+            
+    writer.sheets['Recommended Trades'].hide_gridlines(2)
+
+    writer.save()
+
+
 if __name__ == "__main__":
     portfolio_size = 40000000
 
     sp500 = pd.read_csv(r'..\data\sp_500_stocks.csv')
 
-    df = make_equal_weight_portfolio(sp500, portfolio_size)
-    df2 = make_momentum_portfolio(sp500, portfolio_size)
+    background_color = '#0a0a23'
+    font_color = '#ffffff'
 
-    print(df.head())
-    print(df2.head())
+    (make_equal_weight_portfolio(sp500, portfolio_size)
+                                .pipe(export_to_excel, 'equal_weight_recommended_trades')
+    )
+    
+    (make_momentum_portfolio(sp500, portfolio_size)
+                            .pipe(export_to_excel, 'momentum_recommended_trades')
+    )
+    
+    (make_value_portfolio(sp500, portfolio_size)
+                        .pipe(export_to_excel, 'value_recommended_trades')
+    )
+
