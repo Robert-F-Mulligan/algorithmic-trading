@@ -7,7 +7,7 @@ This repo will be used to show sample ways (using *fake stock data*) to create s
 
 Investment Strategies covered:
 
-- Equal-weight index Investing Strategy
+- Equal-Weight Index Investing Strategy
 - Quantitative Momentum Investing Strategy
 - Quantitative Value Investing Strategy
 
@@ -15,6 +15,14 @@ We will be using the `pandas` library to accomplish:
 - Data cleaning
 - Data merging
 - Feature extraction
+
+We will be using the `numpy` library to accomplish:
+- math calculations to prevent over-investing (floor / ceil)
+- array splitting
+
+We will be using the `requests` library to accomplish:
+- API connection
+- Downloading JSON data for parsing
 
 ## Project Organization
 
@@ -36,8 +44,13 @@ We will be using the `pandas` library to accomplish:
     
 ## Set up
 - Sign up for a free account with [IEX CLOUD](https://iexcloud.io/).
-- Create a .env file to hold [API token](https://iexcloud.io/console/tokens).
-- Download the sample S&p 500 ticker list [here](http://nickmccullum.com/algorithmic-trading-python/sp_500_stocks.csv).
+- Create a .env file to hold the [API token](https://iexcloud.io/console/tokens).
+
+![Image of IEX CLOUD Homepage](./figures/readme-files/iex-home-page.png)
+
+![Image of IEX CLOUD Token Page](./figures/readme-files/iex-token-page.png)
+
+- Download the sample S&P 500 ticker list [here](http://nickmccullum.com/algorithmic-trading-python/sp_500_stocks.csv).
 
 
 
