@@ -46,9 +46,9 @@ We will be using the `requests` library to accomplish:
 - Sign up for a free account with [IEX CLOUD](https://iexcloud.io/).
 - Create a .env file to hold the [API token](https://iexcloud.io/console/tokens).
 
-![Image of IEX CLOUD Homepage](./figures/iex-home-page.png)
+![Image of IEX CLOUD Homepage](./figures/iex-home-page.PNG)
 
-![Image of IEX CLOUD Token Page](./figures/iex-token-page.png)
+![Image of IEX CLOUD Token Page](./figures/iex-token-page.PNG)
 
 - Download the sample S&P 500 ticker list [here](http://nickmccullum.com/algorithmic-trading-python/sp_500_stocks.csv).
 
